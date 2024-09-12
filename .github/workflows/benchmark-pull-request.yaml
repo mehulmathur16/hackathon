@@ -18,7 +18,7 @@ jobs:
   benchmarks:
     name: Run benchmarks for pr
     # if: "${{ contains(github.event.pull_request.labels.*.name, 'ci: benchmark') }}"
-    runs-on: benchmarking-runner
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
