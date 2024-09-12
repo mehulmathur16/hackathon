@@ -174,7 +174,8 @@ impl Post {
         &self.body
     }
 
-    async fn user(&self, ctx: &Context<'_>) -> async_graphql::Result<User> {
+    async fn user(&self, ctx: &Context<'_>, id: i32) -> async_graphql::Result<User> {
+        let loader = ctx.data::<DataLoader<UserLoader>>().unwrap();
         let user = loader
             .load_one(id)
             .await?
