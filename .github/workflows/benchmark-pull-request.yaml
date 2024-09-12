@@ -2,7 +2,6 @@ name: Benchmark PR
 
 on:
   push:
-    paths: ["projects/**"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
