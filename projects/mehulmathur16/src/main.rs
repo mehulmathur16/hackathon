@@ -175,11 +175,11 @@ impl Post {
     }
 
     async fn user(&self, ctx: &Context<'_>) -> async_graphql::Result<User> {
-        let loader = ctx.data::<DataLoader<UserLoader>>().unwrap();
-        loader
-            .load_one(self.user_id)
+        let user = loader
+            .load_one(id)
             .await?
-            .ok_or_else(|| async_graphql::Error::new("User not found"))
+            .ok_or_else(|| async_graphql::Error::new("User not found"))?;
+        Ok(user)
     }
 }
 

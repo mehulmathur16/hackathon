@@ -1,45 +1,42 @@
 name: Benchmark PR
 
 on:
-  pull_request:
-    paths: ["projects/**"]
-    types: [opened, reopened, synchronize, labeled]
-    branches: [main]
+  push:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  benchmarks_stub:
-    name: Run benchmarks for pr
-    if: "${{ !contains(github.event.pull_request.labels.*.name, 'ci: benchmark') }}"
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Fake job if label is not set"
+  # benchmarks_stub:
+  #   name: Run benchmarks for pr
+  #   if: "${{ !contains(github.event.pull_request.labels.*.name, 'ci: benchmark') }}"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo "Fake job if label is not set"
 
   benchmarks:
     name: Run benchmarks for pr
-    if: "${{ contains(github.event.pull_request.labels.*.name, 'ci: benchmark') }}"
-    runs-on: benchmarking-runner
+    # if: "${{ contains(github.event.pull_request.labels.*.name, 'ci: benchmark') }}"
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v45
-        with:
-          files: projects/${{ github.event.pull_request.head.repo.owner.login }}/**
+      # - name: Get changed files
+      #   id: changed-files
+      #   uses: tj-actions/changed-files@v45
+      #   with:
+      #     files: projects/mehulmathur16/**
 
-      - name: Check for unrelated changes
-        if: steps.changed-files.outputs.other_modified_files_count != 0
-        run: |
-          echo "Found changes in the files outside of the participant project folder"
-          echo "Check the rules and make changes/additions only inside projects/${{ github.event.pull_request.head.repo.owner.login }}"
-          echo "Following files have changes:"
-          echo ${{ steps.changed-files.outputs.other_modified_files }}
-          exit 1
+      # - name: Check for unrelated changes
+      #   if: steps.changed-files.outputs.other_modified_files_count != 0
+      #   run: |
+      #     echo "Found changes in the files outside of the participant project folder"
+      #     echo "Check the rules and make changes/additions only inside projects/mehulmathur16"
+      #     echo "Following files have changes:"
+      #     echo ${{ steps.changed-files.outputs.other_modified_files }}
+      #     exit 1
 
       - name: Install Stable Toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -58,10 +55,10 @@ jobs:
         run: cargo build -p mock-api --release
 
       - name: Run Benchmarks
-        run: cargo run -- --project ${{ github.event.pull_request.head.repo.owner.login }}
+        run: cargo run -- --project mehulmathur16
 
       - name: Generate comment
-        run: ./comment.sh $( cat results/${{ github.event.pull_request.head.repo.owner.login }}/score.out )
+        run: ./comment.sh $( cat results/mehulmathur16/score.out )
 
       - name: Show comment body
         run: cat body.md
